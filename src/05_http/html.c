@@ -1,6 +1,7 @@
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
@@ -79,7 +80,9 @@ int _read(int client_socket) {
     }
     printf("----- REQUEST -----\n");
     printf("%s", buffer);
-    printf("-------------------\n");
+    printf("\n-------------------\n");
+
+    memset(buffer, 0, sizeof(buffer));
 
     return 0;
 }
@@ -96,6 +99,8 @@ int _write(int client_socket, char *texts) {
     printf("----- RESPONSE -----\n");
     printf("%s", buffer);
     printf("\n-------------------\n");
+
+    memset(buffer, 0, sizeof(buffer));
 
     return 0;
 }
