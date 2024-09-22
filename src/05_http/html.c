@@ -26,19 +26,13 @@ int _read(int client_socket) {
 }
 
 int _write(int client_socket, char *texts) {
-    char buffer[BUFFER_SIZE];
-
-    for (int i = 0; i < sizeof(buffer); i++) buffer[i] = texts[i];
-
-    if ((write(client_socket, buffer, (size_t)sizeof(buffer))) < 0) {
+    if ((write(client_socket, texts, (size_t)strlen(texts))) < 0) {
         perror("FAILED TO WRITE");
         exit(EXIT_FAILURE);
     }
     printf("----- RESPONSE -----\n");
-    printf("%s", buffer);
+    printf("%s", texts);
     printf("\n-------------------\n");
-
-    memset(buffer, 0, sizeof(buffer));
 
     return 0;
 }
@@ -55,10 +49,9 @@ int main() {
 
         _read(client_socket);
 
-        char *texts =
-            "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: 15\r\n\r\nこんにちは\0";
-
-        _write(client_socket, texts);
+        char *text =
+            "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: 15\r\n\r\nこんにちは";
+        _write(client_socket, text);
 
         close(client_socket);
 
