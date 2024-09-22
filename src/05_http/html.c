@@ -4,6 +4,8 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+#define BUFFER_SIZE 1024
+
 int _bind(int sock, int port) {
     struct sockaddr_in server_addr;
 
@@ -29,10 +31,16 @@ int _listen(int sock, int queue_length) {
 int _create_server_socket() {
     int sock;
     int PROTOCOL = 0;
+
     if ((sock = socket(PF_INET, SOCK_STREAM, PROTOCOL)) < 0) {
         perror("FAILED TO CREATE SERVER SOCKET");
         exit(EXIT_FAILURE);
     }
+
+    // Avoid "Address already in use" error
+    if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int)) < 0)
+        perror("setsockopt(SO_REUSEADDR) failed");
+
     printf("SERVER SOCKET CREATED\n");
     printf("FILE DESCRIPTOR: %d\n", sock);
 
@@ -63,7 +71,7 @@ int _accept(int server_socket) {
 }
 
 int _read(int client_socket) {
-    char buffer[1024];
+    char buffer[BUFFER_SIZE];
 
     if ((read(client_socket, buffer, (size_t)sizeof(buffer))) < 0) {
         perror("FAILED TO READ");
@@ -77,7 +85,7 @@ int _read(int client_socket) {
 }
 
 int _write(int client_socket, char *texts) {
-    char buffer[1024];
+    char buffer[BUFFER_SIZE];
 
     for (int i = 0; i < sizeof(buffer); i++) buffer[i] = texts[i];
 
